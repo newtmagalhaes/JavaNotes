@@ -1,6 +1,5 @@
 CREATE TABLE notes (
-    id VARCHAR(20) NOT NULL,
+    id SERIAL PRIMARY KEY,
     title VARCHAR(80) NOT NULL,
-    body TEXT,
-    PRIMARY KEY (id)
+    body TEXT
 );
