@@ -2,21 +2,20 @@ package com.hpc.totem_api.domain;
 
 import com.hpc.totem_api.dto.notes.PostNoteDTO;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
 @Table(name = "notes")
 @Entity(name = "notes")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "uuid")
+@EqualsAndHashCode(of = "id")
 public class Note {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notes_id_seq")
+    @SequenceGenerator(name = "notes_id_seq", allocationSize = 1)
     private int id;
     private String title;
     private String body;
