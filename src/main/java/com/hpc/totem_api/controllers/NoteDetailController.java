@@ -1,48 +1,34 @@
 package com.hpc.totem_api.controllers;
 
-import com.hpc.totem_api.domain.Note;
-import com.hpc.totem_api.dto.notes.CreatedNoteDTO;
+import com.hpc.totem_api.dto.notes.GetDetailNoteDTO;
 import com.hpc.totem_api.dto.notes.PostNoteDTO;
-import com.hpc.totem_api.repositories.NoteRepository;
+import com.hpc.totem_api.dto.notes.UpdatedNoteDTO;
+import com.hpc.totem_api.exception.NoteNotFoundException;
+import com.hpc.totem_api.services.NoteServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RequestMapping("note/{id}")
 @RestController
 public class NoteDetailController {
 
     @Autowired
-    private NoteRepository repository;
+    private NoteServiceInterface noteService;
 
     @GetMapping
-    public ResponseEntity<CreatedNoteDTO> detailedNote(@PathVariable("id") int id) {
-        Optional<Note> note = repository.findById(String.valueOf(id));
-        if (note.isEmpty()) return ResponseEntity.notFound().build();
-
-        return ResponseEntity.ok(new CreatedNoteDTO(note.get()));
+    public ResponseEntity<GetDetailNoteDTO> detailedNote(@PathVariable("id") int id) throws NoteNotFoundException {
+        return ResponseEntity.ok(noteService.retrieveNote(String.valueOf(id)));
     }
 
     @PutMapping
-    public ResponseEntity<CreatedNoteDTO> updateNote(@PathVariable("id") int id, @RequestBody PostNoteDTO data) {
-        Optional<Note> possibleNote = repository.findById(String.valueOf(id));
-        if (possibleNote.isEmpty()) return ResponseEntity.notFound().build();
-
-        Note note = possibleNote.get();
-        note.setTitle(data.title());
-        note.setBody(data.body());
-        repository.save(note);
-        return ResponseEntity.ok(new CreatedNoteDTO(note));
+    public ResponseEntity<UpdatedNoteDTO> updateNote(@PathVariable("id") int id, @RequestBody PostNoteDTO data) throws NoteNotFoundException {
+        return ResponseEntity.ok(noteService.updateNote(String.valueOf(id), data));
     }
 
     @DeleteMapping
-    public ResponseEntity<Object> deleteNote(@PathVariable("id") int id) {
-        Optional<Note> possibleNote = repository.findById(String.valueOf(id));
-        if (possibleNote.isEmpty()) return ResponseEntity.notFound().build();
-
-        repository.delete(possibleNote.get());
+    public ResponseEntity<Object> deleteNote(@PathVariable("id") int id) throws NoteNotFoundException {
+        noteService.deleteNote(String.valueOf(id));
         return ResponseEntity.noContent().build();
     }
 }
